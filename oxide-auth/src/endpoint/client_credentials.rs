@@ -194,6 +194,7 @@ where
             .endpoint
             .inner
             .response(&mut request, InnerTemplate::Ok.into())?;
+        response.ok().map_err(|err| self.endpoint.inner.web_error(err))?;
         response
             .body_json(&token.to_json())
             .map_err(|err| self.endpoint.inner.web_error(err))?;
