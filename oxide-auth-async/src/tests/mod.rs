@@ -50,6 +50,9 @@ enum Status {
     #[default]
     Ok,
 
+    /// HTTP status code 201.
+    Created,
+
     /// Http status code 302.
     Redirect,
 
@@ -107,6 +110,12 @@ impl WebResponse for CraftedResponse {
         self.status = Status::Ok;
         self.location = None;
         self.www_authenticate = None;
+        Ok(())
+    }
+
+    fn created(&mut self) -> Result<(), Self::Error> {
+        self.ok()?;
+        self.status = Status::Created;
         Ok(())
     }
 

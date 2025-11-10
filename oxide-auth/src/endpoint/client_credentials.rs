@@ -17,6 +17,12 @@ use super::{
     is_authorization_method, OwnerConsent,
 };
 
+#[derive(Eq, PartialEq, Clone, Copy, Debug)]
+pub enum SuccessStatus {
+    Ok,
+    Created,
+}
+
 /// Offers access tokens to authenticated third parties.
 ///
 /// A client may request a token that provides access to their own resources.
@@ -34,6 +40,7 @@ where
     endpoint: WrappedToken<E, R>,
     allow_credentials_in_body: bool,
     allow_refresh_token: bool,
+    success_status: SuccessStatus,
 }
 
 struct WrappedToken<E: Endpoint<R>, R: WebRequest> {
@@ -100,6 +107,7 @@ where
             },
             allow_credentials_in_body: false,
             allow_refresh_token: false,
+            success_status: SuccessStatus::Ok,
         })
     }
 
@@ -126,6 +134,11 @@ where
     /// [4.4.3]: https://www.rfc-editor.org/rfc/rfc6749#section-4.4.3
     pub fn allow_refresh_token(&mut self, allow: bool) {
         self.allow_refresh_token = allow;
+    }
+
+    /// Use chosen HTTP status to represent success (instead of HTTP 200)
+    pub fn success_status(&mut self, status: SuccessStatus) {
+        self.success_status = status;
     }
 
     /// Use the checked endpoint to check for authorization for a resource.
@@ -194,7 +207,12 @@ where
             .endpoint
             .inner
             .response(&mut request, InnerTemplate::Ok.into())?;
-        response.ok().map_err(|err| self.endpoint.inner.web_error(err))?;
+        let status_result = if self.success_status == SuccessStatus::Ok {
+            response.ok()
+        } else {
+            response.created()
+        };
+        status_result.map_err(|err| self.endpoint.inner.web_error(err))?;
         response
             .body_json(&token.to_json())
             .map_err(|err| self.endpoint.inner.web_error(err))?;

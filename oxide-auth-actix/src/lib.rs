@@ -312,6 +312,11 @@ impl WebResponse for OAuthResponse {
         Ok(())
     }
 
+    fn created(&mut self) -> Result<(), Self::Error> {
+        self.status = StatusCode::CREATED;
+        Ok(())
+    }
+
     fn redirect(&mut self, url: Url) -> Result<(), Self::Error> {
         self.status = StatusCode::FOUND;
         let location = String::from(url);

@@ -98,6 +98,11 @@ impl WebResponse for Response {
         Ok(())
     }
 
+    fn created(&mut self) -> Result<(), Self::Error> {
+        self.inner.status_code = 201;
+        Ok(())
+    }
+
     fn redirect(&mut self, url: Url) -> Result<(), Self::Error> {
         self.inner.status_code = 302;
         self.inner

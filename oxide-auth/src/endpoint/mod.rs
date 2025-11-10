@@ -61,6 +61,7 @@ pub use crate::primitives::registrar::PreGrant;
 pub use self::authorization::*;
 pub use self::accesstoken::*;
 pub use self::client_credentials::ClientCredentialsFlow;
+pub use self::client_credentials::SuccessStatus;
 pub use self::error::OAuthError;
 pub use self::refresh::RefreshFlow;
 pub use self::resource::*;
@@ -325,6 +326,9 @@ pub trait WebResponse {
 
     /// Set the response status to 200.
     fn ok(&mut self) -> Result<(), Self::Error>;
+
+    /// Set the response status to 201.
+    fn created(&mut self) -> Result<(), Self::Error>;
 
     /// A response which will redirect the user-agent to which the response is issued.
     fn redirect(&mut self, url: Url) -> Result<(), Self::Error>;

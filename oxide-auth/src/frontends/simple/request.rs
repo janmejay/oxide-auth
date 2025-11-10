@@ -47,6 +47,9 @@ pub enum Status {
     /// Http status code 200.
     Ok,
 
+    /// Http status code 201.
+    Created,
+
     /// Http status code 302.
     Redirect,
 
@@ -141,6 +144,12 @@ impl WebResponse for Response {
         Ok(())
     }
 
+    fn created(&mut self) -> Result<(), Self::Error> {
+        self.ok()?;
+        self.status = Status::Created;
+        Ok(())
+    }
+
     /// A response which will redirect the user-agent to which the response is issued.
     fn redirect(&mut self, url: Url) -> Result<(), Self::Error> {
         self.status = Status::Redirect;
@@ -221,6 +230,10 @@ where
 
     fn ok(&mut self) -> Result<(), Self::Error> {
         self.0.ok().map_err(&mut self.1)
+    }
+
+    fn created(&mut self) -> Result<(), Self::Error> {
+        self.0.created().map_err(&mut self.1)
     }
 
     /// A response which will redirect the user-agent to which the response is issued.

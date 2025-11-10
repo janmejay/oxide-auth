@@ -126,6 +126,12 @@
 //!         Ok(())
 //!     }
 //!
+//!     fn created(&mut self) -> Result<(), OAuthError> {
+//!         self.ok()?;
+//!         self.status = 201;
+//!         Ok(())
+//!     }
+//!
 //!     fn redirect(&mut self, target: Url) -> Result<(), OAuthError> {
 //!         self.status = 302;
 //!         self.www_authenticate = None;
