@@ -17,9 +17,12 @@ use super::{
     is_authorization_method, OwnerConsent,
 };
 
+/// Status to represent success responses.
 #[derive(Eq, PartialEq, Clone, Copy, Debug)]
 pub enum SuccessStatus {
+    /// HTTP 200 OK
     Ok,
+    /// HTTP 201 Created
     Created,
 }
 
